@@ -10,8 +10,8 @@ public class AlchemyUI : UIPanel
 
     void Awake()
     {
-        backButton.onClick.AddListener(() => GameManager.Instance.SwitchState(GameState.MainUI));
-        craftButton.onClick.AddListener(TryCraft);
+        //backButton.onClick.AddListener(() => GameManager.Instance.SwitchState(GameState.MainUI));
+        //craftButton.onClick.AddListener(TryCraft);
     }
 
     // 显示面板时更新提示

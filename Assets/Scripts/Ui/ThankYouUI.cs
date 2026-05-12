@@ -4,12 +4,6 @@ using UnityEngine.UI;
 public class ThankYouUI : UIPanel
 {
     [SerializeField] private Text thankYouText; // 感谢文本
-    [SerializeField] private Button restartButton; // 重新开始按钮
-
-    void Awake()
-    {
-        restartButton.onClick.AddListener(RestartGame);
-    }
 
     // 显示面板时播放感谢
     public override void Show()

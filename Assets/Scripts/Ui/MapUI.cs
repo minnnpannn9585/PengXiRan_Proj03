@@ -15,7 +15,7 @@ public class MapUI : UIPanel
 
     void Awake()
     {
-        backButton.onClick.AddListener(() => GameManager.Instance.SwitchState(GameState.MainUI));
+        //backButton.onClick.AddListener(() => GameManager.Instance.SwitchState(GameState.MainUI));
 
         // 绑定每个地点按钮的事件
         foreach (var location in mapLocations)
