@@ -4,54 +4,73 @@ public class PlayerController : MonoBehaviour
 {
     [Header("移动参数")]
     public float moveSpeed = 5f;
-    public float jumpForce = 8f;
+
+    [Header("动画参数")]
+    [SerializeField] private Animator animator;
+
+    [Header("角色朝向")]
+    [SerializeField] private Transform visualTransform;
 
     private Rigidbody2D rb;
     private Vector3 startPosition;
-    private bool isGrounded;
+    private Vector3 visualLocalScale;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         startPosition = transform.position;
+
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+
+        if (visualTransform == null)
+        {
+            visualTransform = transform;
+        }
+
+        visualLocalScale = visualTransform.localScale;
     }
 
     void Update()
     {
-        // 左右移动
         float inputX = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(inputX * moveSpeed, rb.velocity.y);
 
-        // 跳跃
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        bool isRunning = Mathf.Abs(inputX) > 0.01f;
+        animator.SetBool("IsRunning", isRunning);
+
+        UpdateFacing(inputX);
+
+        if (Input.GetMouseButtonDown(0))
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            animator.SetTrigger("Attack");
         }
     }
 
-    // 检测是否在地面
-    void OnCollisionStay2D(Collision2D col)
+    private void UpdateFacing(float inputX)
     {
-        if (col.collider.CompareTag("Ground"))
+        if (inputX > 0.01f)
         {
-            isGrounded = true;
+            visualTransform.localScale = new Vector3(
+                Mathf.Abs(visualLocalScale.x),
+                visualLocalScale.y,
+                visualLocalScale.z);
+        }
+        else if (inputX < -0.01f)
+        {
+            visualTransform.localScale = new Vector3(
+                -Mathf.Abs(visualLocalScale.x),
+                visualLocalScale.y,
+                visualLocalScale.z);
         }
     }
 
-    void OnCollisionExit2D(Collision2D col)
-    {
-        if (col.collider.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
-    }
-
-    // 检测与敌人碰撞
     void OnCollisionEnter2D(Collision2D col)
     {
         if (col.collider.CompareTag("Enemy"))
         {
-            // 判断是否从上方踩中敌人
             float heightDiff = transform.position.y - col.transform.position.y;
             if (heightDiff > 0.5f)
             {
@@ -64,10 +83,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 重置玩家位置
     public void ResetPosition()
     {
         transform.position = startPosition;
         rb.velocity = Vector2.zero;
+        animator.SetBool("IsRunning", false);
     }
 }
